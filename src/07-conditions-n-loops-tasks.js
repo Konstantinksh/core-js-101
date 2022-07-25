@@ -121,8 +121,26 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  function isIn(ax, ay, x1, y1, x2, y2) {
+    return ax <= x2 && ax >= x1 && ay <= y2 && ay >= y1;
+  }
+
+  function getCoo(rect) {
+    return [rect.left, rect.top, rect.left + rect.width, rect.top + rect.height];
+  }
+
+  const coor1 = getCoo(rect1);
+  const coor2 = getCoo(rect2);
+
+  return isIn(coor1[0], coor1[1], ...coor2)
+    || isIn(coor1[0], coor1[3], ...coor2)
+    || isIn(coor1[2], coor1[1], ...coor2)
+    || isIn(coor1[2], coor1[3], ...coor2)
+    || isIn(coor2[0], coor2[1], ...coor1)
+    || isIn(coor2[0], coor2[3], ...coor1)
+    || isIn(coor2[2], coor2[1], ...coor1)
+    || isIn(coor2[2], coor2[3], ...coor1);
 }
 
 
@@ -152,8 +170,9 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  return Math.sqrt((point.x - circle.center.x) ** 2
+  + (point.y - circle.center.y) ** 2) < circle.radius;
 }
 
 
@@ -168,8 +187,9 @@ function isInsideCircle(/* circle, point */) {
  *   'abracadabra'  => 'c'
  *   'entente' => null
  */
-function findFirstSingleChar(/* str */) {
-  throw new Error('Not implemented');
+function findFirstSingleChar(str) {
+  const arr = str.split('').filter((el) => el !== ' ');
+  return arr[arr.findIndex((el) => arr.filter((a) => a === el).length === 1)];
 }
 
 
@@ -195,8 +215,9 @@ function findFirstSingleChar(/* str */) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  const arr = [a, b].sort((n, m) => n - m);
+  return `${isStartIncluded ? '[' : '('}${arr[0]}, ${arr[1]}${isEndIncluded ? ']' : ')'}`;
 }
 
 
@@ -212,8 +233,8 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str.split('').reverse().join('');
 }
 
 
@@ -229,8 +250,8 @@ function reverseString(/* str */) {
  *   87354 => 45378
  *   34143 => 34143
  */
-function reverseInteger(/* num */) {
-  throw new Error('Not implemented');
+function reverseInteger(num) {
+  return Number(reverseString(num.toString()));
 }
 
 
@@ -255,6 +276,11 @@ function reverseInteger(/* num */) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(/* ccn */) {
+  // return 10 - (ccn.toString().slice(0, ccn.toString().length - 1).split('')
+  //   .map((el, i) => (i % 2 !== 0 ? Number(el) * 2 : Number(el)))
+  //   .map((el) => (el > 9 ? el - 9 : el))
+  //   .reduce((acum, cur) => acum + cur, 0) % 10)
+  //   === Number(ccn.toString()[ccn.toString().length - 1]);
   throw new Error('Not implemented');
 }
 
@@ -272,8 +298,9 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const res = num.toString().split('').reduce((acum, cur) => acum + Number(cur), 0);
+  return res > 9 ? getDigitalRoot(res) : res;
 }
 
 
@@ -299,6 +326,55 @@ function getDigitalRoot(/* num */) {
  *   '{[(<{[]}>)]}' = true
  */
 function isBracketsBalanced(/* str */) {
+  // const arr = str.split('');
+  //  // Using ArrayDeque is faster
+  //   // than using Stack class
+  //   let stack = [];
+
+  //   // Traversing the Expression
+  //   for(let i = 0; i < expr.length; i++)
+  //   {
+  //       let x = expr[i];
+
+  //       if (x == '(' || x == '[' || x == '{')
+  //       {
+
+  //           // Push the element in the stack
+  //           stack.push(x);
+  //           continue;
+  //       }
+
+  //       // If current character is not opening
+  //       // bracket, then it must be closing.
+  //       // So stack cannot be empty at this point.
+  //       if (stack.length == 0)
+  //           return false;
+
+  //       let check;
+  //       switch (x){
+  //       case ')':
+  //           check = stack.pop();
+  //           if (check == '{' || check == '[')
+  //               return false;
+  //           break;
+
+  //       case '}':
+  //           check = stack.pop();
+  //           if (check == '(' || check == '[')
+  //               return false;
+  //           break;
+
+  //       case ']':
+  //           check = stack.pop();
+  //           if (check == '(' || check == '{')
+  //               return false;
+  //           break;
+  //       }
+  //   }
+
+  //   // Check Empty Stack
+  //   return (stack.length == 0);
+  // }
   throw new Error('Not implemented');
 }
 
