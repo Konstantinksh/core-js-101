@@ -172,7 +172,7 @@ function doRectanglesOverlap(rect1, rect2) {
  */
 function isInsideCircle(circle, point) {
   return Math.sqrt((point.x - circle.center.x) ** 2
-  + (point.y - circle.center.y) ** 2) < circle.radius;
+    + (point.y - circle.center.y) ** 2) < circle.radius;
 }
 
 
@@ -275,13 +275,20 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  // return 10 - (ccn.toString().slice(0, ccn.toString().length - 1).split('')
-  //   .map((el, i) => (i % 2 !== 0 ? Number(el) * 2 : Number(el)))
-  //   .map((el) => (el > 9 ? el - 9 : el))
-  //   .reduce((acum, cur) => acum + cur, 0) % 10)
-  //   === Number(ccn.toString()[ccn.toString().length - 1]);
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const newCcn = ccn.toString();
+
+  let checkDigit = 0;
+  let stateEven = false;
+
+  for (let n = newCcn.length - 1; n >= 0; n -= 1) {
+    let nDigit = parseInt(newCcn.charAt(n), 10);
+    if (stateEven) nDigit *= 2;
+    if (nDigit > 9) nDigit -= 9;
+    checkDigit += nDigit;
+    stateEven = !stateEven;
+  }
+  return (checkDigit % 10) === 0;
 }
 
 /**
@@ -378,8 +385,9 @@ function isBracketsBalanced(str) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  if (n === 10) return num;
+  return parseInt(num, 10).toString(n);
 }
 
 
@@ -395,8 +403,17 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const resStart = pathes.every((el) => el[0] === '/') ? '/' : '';
+  const arr = pathes
+    .map((el) => el.split('/'))
+    .flat()
+    .filter((el) => el !== '');
+  const resArr = arr
+    .filter((el1) => arr.filter((el2) => el1 === el2).length === pathes.length)
+    .filter((el, i) => arr.indexOf(el) !== i);
+  const resEnd = resArr.length > 0 ? '/' : '';
+  return `${resStart}${resArr.join('/')}${resEnd}`;
 }
 
 
@@ -418,8 +435,23 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const a1 = m1.length;
+  const a2 = m1[0].length;
+  const b2 = m2[0].length;
+  const res = new Array(a1);
+  for (let i = 0; i < a1; i += 1) {
+    res[i] = new Array(b2);
+  }
+  for (let i = 0; i < a1; i += 1) {
+    for (let j = 0; j < b2; j += 1) {
+      res[i][j] = 0;
+      for (let x = 0; x < a2; x += 1) {
+        res[i][j] += m1[i][x] * m2[x][j];
+      }
+    }
+  }
+  return res;
 }
 
 
@@ -453,7 +485,7 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
+function evaluateTicTacToePosition( position) {
   throw new Error('Not implemented');
 }
 
