@@ -325,57 +325,36 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  // const arr = str.split('');
-  //  // Using ArrayDeque is faster
-  //   // than using Stack class
-  //   let stack = [];
-
-  //   // Traversing the Expression
-  //   for(let i = 0; i < expr.length; i++)
-  //   {
-  //       let x = expr[i];
-
-  //       if (x == '(' || x == '[' || x == '{')
-  //       {
-
-  //           // Push the element in the stack
-  //           stack.push(x);
-  //           continue;
-  //       }
-
-  //       // If current character is not opening
-  //       // bracket, then it must be closing.
-  //       // So stack cannot be empty at this point.
-  //       if (stack.length == 0)
-  //           return false;
-
-  //       let check;
-  //       switch (x){
-  //       case ')':
-  //           check = stack.pop();
-  //           if (check == '{' || check == '[')
-  //               return false;
-  //           break;
-
-  //       case '}':
-  //           check = stack.pop();
-  //           if (check == '(' || check == '[')
-  //               return false;
-  //           break;
-
-  //       case ']':
-  //           check = stack.pop();
-  //           if (check == '(' || check == '{')
-  //               return false;
-  //           break;
-  //       }
-  //   }
-
-  //   // Check Empty Stack
-  //   return (stack.length == 0);
-  // }
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const stack = [];
+  for (let i = 0; i < str.length; i += 1) {
+    const x = str[i];
+    if (x === '(' || x === '[' || x === '{' || x === '<') {
+      stack.push(x);
+    }
+    if (stack.length === 0) return false;
+    let curVal;
+    switch (x) {
+      case '>':
+        curVal = stack.pop();
+        if (curVal === '{' || curVal === '[' || curVal === '(') return false;
+        break;
+      case ')':
+        curVal = stack.pop();
+        if (curVal === '{' || curVal === '[' || curVal === '<') return false;
+        break;
+      case '}':
+        curVal = stack.pop();
+        if (curVal === '(' || curVal === '[' || curVal === '<') return false;
+        break;
+      case ']':
+        curVal = stack.pop();
+        if (curVal === '(' || curVal === '{' || curVal === '<') return false;
+        break;
+      default: break;
+    }
+  }
+  return (stack.length === 0);
 }
 
 
