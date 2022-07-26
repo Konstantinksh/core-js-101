@@ -116,33 +116,102 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
+class MySuperBaseElementSelector {
+  constructor(init, method) {
+    this.data = [init];
+    this.haveEl = false;
+    this.haveId = false;
+    this.haveAtr = false;
+    this.haveClass = false;
+    this.havePsEl = false;
+    this.havePsClass = false;
+    this[method] = true;
+    this.exc1 = 'Element, id and pseudo-element should not occur more then one time inside the selector';
+    this.exc2 = 'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element';
+  }
+
+  element(value) {
+    if (this.haveEl) throw this.exc1;
+    if (this.haveId || this.haveClass || this.haveAtr
+      || this.havePsClass || this.havePsEl) throw this.exc2;
+    this.data.push(value);
+    this.haveEl = true;
+    return this;
+  }
+
+  id(value) {
+    if (this.haveId) throw this.exc1;
+    if (this.haveClass || this.haveAtr
+      || this.havePsClass || this.havePsEl) throw this.exc2;
+    this.data.push(`#${value}`);
+    this.haveId = true;
+    return this;
+  }
+
+  class(value) {
+    if (this.haveAtr || this.havePsClass || this.havePsEl) throw this.exc2;
+    this.data.push(`.${value}`);
+    this.haveClass = true;
+    return this;
+  }
+
+  attr(value) {
+    if (this.havePsClass || this.havePsEl) throw this.exc2;
+    this.data.push(`[${value}]`);
+    this.haveAtr = true;
+    return this;
+  }
+
+  pseudoClass(value) {
+    if (this.havePsEl) throw this.exc2;
+    this.data.push(`:${value}`);
+    this.havePsClass = true;
+    return this;
+  }
+
+  pseudoElement(value) {
+    if (this.havePsEl) throw this.exc1;
+    this.data.push(`::${value}`);
+    this.havePsEl = true;
+    return this;
+  }
+
+  stringify() {
+    const res = this.data.join('');
+    return res;
+  }
+}
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  result: [],
+
+  element(value) {
+    return new MySuperBaseElementSelector(value, 'haveEl');
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return new MySuperBaseElementSelector(`#${value}`, 'haveId');
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return new MySuperBaseElementSelector(`.${value}`, 'haveClass');
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return new MySuperBaseElementSelector(`[${value}]`, 'haveAtr');
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return new MySuperBaseElementSelector(`:${value}`, 'havePsClass');
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return new MySuperBaseElementSelector(`::${value}`, 'havePsEl');
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    const res = `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+    return new MySuperBaseElementSelector(res, 'Combain');
   },
 };
 
